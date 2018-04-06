@@ -75,10 +75,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     isPlaying = true;
                     updatingActualTime();
                     showSongTime();
+                    songInfo.setSingleLine(true);
+                    songInfo.setFreezesText(true);
+                    songInfo.setText(getString(R.string.kino_w_elblagu_song));
+                    songInfo.setSelected(true);
+                    songInfo.setFocusable(true);
+                    songInfo.setFocusableInTouchMode(true);
+                    songInfo.setEllipsize(TextUtils.TruncateAt.MARQUEE);
                 } else {
                     play.setImageResource(R.drawable.button_pause_grey);
                     song.pause();
                     isPlaying = false;
+                    songInfo.setSelected(false);
                 }
                 break;
             case R.id.back_button:

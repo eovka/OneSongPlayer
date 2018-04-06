@@ -36,21 +36,16 @@
         android:gravity="center_horizontal"
         android:layout_marginStart="@dimen/bigger_padding"
         android:layout_marginEnd="@dimen/bigger_padding"
-        android:orientation="horizontal">
+        android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/song_info"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
             android:layout_marginEnd="@dimen/standard_padding"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:text="@string/kino_w_elblagu_song"
-            android:focusable="true"
-            android:focusableInTouchMode="true" />
+            tools:text="@string/kino_w_elblagu_song" />
 
         <TextView
             android:id="@+id/actual_time"
