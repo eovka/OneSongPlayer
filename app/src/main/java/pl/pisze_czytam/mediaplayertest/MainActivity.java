@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     MediaPlayer song;
     SeekBar seekBar;
+    TextView songInfo;
     TextView actualTimeView;
     TextView songTimeView;
     ImageView play;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rewindTime = 15000;
 
         seekBar = findViewById(R.id.seek_bar);
+        songInfo = findViewById(R.id.song_info);
         actualTimeView = findViewById(R.id.actual_time);
         songTimeView = findViewById(R.id.song_time);
         play = findViewById(R.id.play_button);
@@ -53,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         back.setOnClickListener(this);
         forward.setOnClickListener(this);
         restart.setOnClickListener(this);
+
+        songInfo.setSelected(true);
     }
 
     @SuppressLint("DefaultLocale")

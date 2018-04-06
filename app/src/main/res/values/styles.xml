@@ -3,6 +3,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:fontFamily">serif-monospace</item>
+        <item name="android:textColor">@color/textColor</item>
         <!-- Customization of the action bar -->
         <item name="actionBarStyle">@style/MyActionBar</item>
     </style>
