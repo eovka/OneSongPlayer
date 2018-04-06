@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         forward = findViewById(R.id.for_button);
         restart = findViewById(R.id.restart_button);
 
-        seekBar.setDrawingCacheBackgroundColor(getResources().getColor(R.color.colorAccent));
         actualTime = song.getCurrentPosition();
         finalTime = song.getDuration();
 
@@ -69,18 +68,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     play.setImageResource(R.drawable.button_play_purple);
                     song.start();
                     isPlaying = true;
-                    actualTimeView.setText(String.format("%d:%d",
-                            TimeUnit.MILLISECONDS.toMinutes((long) actualTime),
-                            TimeUnit.MILLISECONDS.toSeconds((long) actualTime) -
-                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long)
-                                            actualTime))));
+                    updatingActualTime();
                     songTimeView.setText(String.format("%d:%d",
                             TimeUnit.MILLISECONDS.toMinutes((long) finalTime),
                             TimeUnit.MILLISECONDS.toSeconds((long) finalTime) -
                                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long)
                                             finalTime))));
-                    myHandler.postDelayed(UpdateSongTime,100);
-                    seekBar.setProgress(actualTime);
                 } else {
                     play.setImageResource(R.drawable.button_pause_grey);
                     song.pause();
@@ -125,17 +118,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
     private Runnable UpdateSongTime = new Runnable() {
-        @SuppressLint("DefaultLocale")
         public void run() {
             actualTime = song.getCurrentPosition();
-            actualTimeView.setText(String.format("%d:%d",
-                    TimeUnit.MILLISECONDS.toMinutes((long) actualTime),
-                    TimeUnit.MILLISECONDS.toSeconds((long) actualTime) -
-                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
-                                    toMinutes((long) actualTime)))
-            );
-            seekBar.setProgress(actualTime);
-            myHandler.postDelayed(this, 100);
+            updatingActualTime();
         }
     };
+
+    @SuppressLint("DefaultLocale")
+    public void updatingActualTime() {
+        actualTimeView.setText(String.format("%d:%d",
+                TimeUnit.MILLISECONDS.toMinutes((long) actualTime),
+                TimeUnit.MILLISECONDS.toSeconds((long) actualTime) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
+                                toMinutes((long) actualTime)))
+        );
+        seekBar.setProgress(actualTime);
+        myHandler.postDelayed(UpdateSongTime,50);
+    }
 }
