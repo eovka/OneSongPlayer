@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     boolean isPlaying;
     int rewindTime;
     private Handler myHandler = new Handler();
-    public static int oneTimeOnly = 0;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -51,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         actualTime = song.getCurrentPosition();
         finalTime = song.getDuration();
+        seekBar.setMax(finalTime);
 
         play.setOnClickListener(this);
         back.setOnClickListener(this);
@@ -58,6 +58,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         restart.setOnClickListener(this);
 
         songInfo.setSelected(true);
+
+        song.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                play.setImageResource(R.drawable.button_play);
+                isPlaying = false;
+                songInfo.setSelected(false);
+                actualTime = 0;
+                song.seekTo(actualTime);
+            }
+        });
     }
 
     @SuppressLint("DefaultLocale")
@@ -65,10 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.play_button:
-                if (oneTimeOnly == 0) {
-                    seekBar.setMax(finalTime);
-                    oneTimeOnly = 1;
-                }
                 if (!isPlaying) {
                     play.setImageResource(R.drawable.button_play_purple);
                     song.start();
@@ -104,6 +111,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 actualTime += rewindTime;
                 song.seekTo(actualTime);
                 seekBar.setProgress(actualTime);
+                updatingActualTime();
+                showSongTime();
                 forward.setImageResource(R.drawable.forward_purple);
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
