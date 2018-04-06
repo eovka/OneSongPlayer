@@ -20,10 +20,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView play;
     ImageView back;
     ImageView forward;
+    ImageView restart;
     private int actualTime;
     private int finalTime;
     boolean isPlaying;
     int rewindTime;
+    private Handler myHandler = new Handler();
+    public static int oneTimeOnly = 0;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -41,34 +44,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         play = findViewById(R.id.play_button);
         back = findViewById(R.id.back_button);
         forward = findViewById(R.id.for_button);
+        restart = findViewById(R.id.restart_button);
 
         seekBar.setDrawingCacheBackgroundColor(getResources().getColor(R.color.colorAccent));
         actualTime = song.getCurrentPosition();
         finalTime = song.getDuration();
-        songTimeView.setText(String.format("%d:%d",
-                TimeUnit.MILLISECONDS.toMinutes((long) finalTime),
-                TimeUnit.MILLISECONDS.toSeconds((long) finalTime) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long)
-                                finalTime))));
-        actualTimeView.setText(String.format("%d:%d",
-                TimeUnit.MILLISECONDS.toMinutes((long) actualTime),
-                TimeUnit.MILLISECONDS.toSeconds((long) actualTime) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long)
-                                actualTime))));
 
         play.setOnClickListener(this);
         back.setOnClickListener(this);
         forward.setOnClickListener(this);
+        restart.setOnClickListener(this);
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.play_button:
+                if (oneTimeOnly == 0) {
+                    seekBar.setMax(finalTime);
+                    oneTimeOnly = 1;
+                }
                 if (!isPlaying) {
                     play.setImageResource(R.drawable.button_play_purple);
                     song.start();
                     isPlaying = true;
+                    actualTimeView.setText(String.format("%d:%d",
+                            TimeUnit.MILLISECONDS.toMinutes((long) actualTime),
+                            TimeUnit.MILLISECONDS.toSeconds((long) actualTime) -
+                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long)
+                                            actualTime))));
+                    songTimeView.setText(String.format("%d:%d",
+                            TimeUnit.MILLISECONDS.toMinutes((long) finalTime),
+                            TimeUnit.MILLISECONDS.toSeconds((long) finalTime) -
+                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long)
+                                            finalTime))));
+                    myHandler.postDelayed(UpdateSongTime,100);
+                    seekBar.setProgress(actualTime);
                 } else {
                     play.setImageResource(R.drawable.button_pause_grey);
                     song.pause();
@@ -76,25 +88,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.back_button:
-                rewindTime = song.getCurrentPosition() - 15000;
-                song.seekTo(rewindTime);
+                actualTime -= rewindTime;
+                song.seekTo(actualTime);
+                seekBar.setProgress(actualTime);
                 back.setImageResource(R.drawable.backward_purple);
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
                         back.setImageResource(R.drawable.backward_grey);
                     }
-                }, 250);
+                }, 200);
                 break;
             case R.id.for_button:
-                rewindTime = song.getCurrentPosition() + 15000;
-                song.seekTo(rewindTime);
+                actualTime += rewindTime;
+                song.seekTo(actualTime);
+                seekBar.setProgress(actualTime);
                 forward.setImageResource(R.drawable.forward_purple);
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
                         forward.setImageResource(R.drawable.forward_grey);
                     }
-                }, 250);
+                }, 200);
                 break;
+            case R.id.restart_button:
+                actualTime = 0;
+                seekBar.setProgress(actualTime);
+                song.seekTo(actualTime);
+                if (isPlaying) {
+                    song.start();
+                }
+                restart.setImageResource(R.drawable.repeat_purple);
+                new Handler().postDelayed(new Runnable() {
+                    public void run() {
+                        restart.setImageResource(R.drawable.repeat_grey);
+                    }
+                }, 200);
         }
     }
+    private Runnable UpdateSongTime = new Runnable() {
+        @SuppressLint("DefaultLocale")
+        public void run() {
+            actualTime = song.getCurrentPosition();
+            actualTimeView.setText(String.format("%d:%d",
+                    TimeUnit.MILLISECONDS.toMinutes((long) actualTime),
+                    TimeUnit.MILLISECONDS.toSeconds((long) actualTime) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
+                                    toMinutes((long) actualTime)))
+            );
+            seekBar.setProgress(actualTime);
+            myHandler.postDelayed(this, 100);
+        }
+    };
 }
