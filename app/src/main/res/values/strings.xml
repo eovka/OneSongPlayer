@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">One Song Player</string>
+    <string name="play_icon">a image with play sign</string>
+    <string name="slash">/</string>
+</resources>
