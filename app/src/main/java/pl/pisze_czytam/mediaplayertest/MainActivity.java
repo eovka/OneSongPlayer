@@ -69,11 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     song.start();
                     isPlaying = true;
                     updatingActualTime();
-                    songTimeView.setText(String.format("%d:%d",
-                            TimeUnit.MILLISECONDS.toMinutes((long) finalTime),
-                            TimeUnit.MILLISECONDS.toSeconds((long) finalTime) -
-                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long)
-                                            finalTime))));
+                    showSongTime();
                 } else {
                     play.setImageResource(R.drawable.button_pause_grey);
                     song.pause();
@@ -126,13 +122,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @SuppressLint("DefaultLocale")
     public void updatingActualTime() {
-        actualTimeView.setText(String.format("%d:%d",
-                TimeUnit.MILLISECONDS.toMinutes((long) actualTime),
-                TimeUnit.MILLISECONDS.toSeconds((long) actualTime) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
-                                toMinutes((long) actualTime)))
-        );
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(actualTime);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(actualTime) - TimeUnit.MINUTES.toSeconds(minutes);
+        if (seconds % 60 < 10) {
+            actualTimeView.setText(String.format("%d:0%d", minutes, seconds));
+        } else {
+            actualTimeView.setText(String.format("%d:%d", minutes, seconds));
+        }
         seekBar.setProgress(actualTime);
         myHandler.postDelayed(UpdateSongTime,50);
+    }
+
+    @SuppressLint("DefaultLocale")
+    public void showSongTime() {
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(finalTime);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(finalTime) - TimeUnit.MINUTES.toSeconds(minutes);
+        if (seconds % 60 < 10) {
+            songTimeView.setText(String.format("%d:0%d", minutes, seconds));
+        } else {
+            songTimeView.setText(String.format("%d:%d", minutes, seconds));
+        }
     }
 }
