@@ -59,16 +59,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         songInfo.setSelected(true);
 
-        song.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                play.setImageResource(R.drawable.button_play);
-                isPlaying = false;
-                songInfo.setSelected(false);
-                actualTime = 0;
-                song.seekTo(actualTime);
-            }
-        });
+//        song.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(MediaPlayer mp) {
+//
+//            }
+//        });
     }
 
     @SuppressLint("DefaultLocale")
@@ -89,6 +85,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     songInfo.setFocusable(true);
                     songInfo.setFocusableInTouchMode(true);
                     songInfo.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+
+                    song.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            play.setImageResource(R.drawable.button_play);
+                            isPlaying = false;
+                            songInfo.setSelected(false);
+                            actualTime = 0;
+                            song.seekTo(actualTime);
+                        }
+                    });
                 } else {
                     play.setImageResource(R.drawable.button_pause_grey);
                     song.pause();

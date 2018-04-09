@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="@dimen/bigger_padding"
+        android:paddingTop="@dimen/standard_padding"
         android:maxHeight="@dimen/seekbar_size"
         android:minHeight="@dimen/seekbar_size"
         android:progressDrawable="@drawable/seekbar"
@@ -36,6 +37,7 @@
         android:gravity="center_horizontal"
         android:layout_marginStart="@dimen/bigger_padding"
         android:layout_marginEnd="@dimen/bigger_padding"
+        android:paddingBottom="@dimen/standard_padding"
         android:orientation="horizontal" >
 
         <TextView
