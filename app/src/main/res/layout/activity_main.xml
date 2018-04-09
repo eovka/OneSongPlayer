@@ -24,9 +24,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="@dimen/bigger_padding"
-        android:paddingTop="@dimen/standard_padding"
         android:maxHeight="@dimen/seekbar_size"
         android:minHeight="@dimen/seekbar_size"
+        android:layout_marginTop="@dimen/standard_padding"
         android:progressDrawable="@drawable/seekbar"
         android:thumbTint="@color/colorAccent"
         app:thumbTint="@color/colorAccent" />
@@ -34,41 +34,42 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_marginStart="@dimen/bigger_padding"
         android:layout_marginEnd="@dimen/bigger_padding"
-        android:paddingBottom="@dimen/standard_padding"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:id="@+id/song_info"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/standard_padding"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            tools:text="@string/kino_w_elblagu_song" />
+        android:layout_marginStart="@dimen/bigger_padding"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/standard_padding">
 
         <TextView
             android:id="@+id/actual_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/starting_time"
-            android:textColor="@color/textColor" />
+            android:text="@string/starting_time" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/slash"
-            android:textColor="@color/textColor" />
+            android:text="@string/slash" />
 
         <TextView
             android:id="@+id/song_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/starting_time"
-            android:textColor="@color/textColor" />
+            android:text="@string/starting_time" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/song_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/bigger_padding"
+        android:layout_marginStart="@dimen/bigger_padding"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/large_margin"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        tools:text="@string/app_name" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,7 +81,7 @@
             android:id="@+id/restart_button"
             style="@style/buttonStyle"
             android:contentDescription="@string/restart_button"
-            android:src="@drawable/repeat_grey" />
+            android:src="@drawable/reload_grey" />
 
         <ImageView
             android:id="@+id/back_button"

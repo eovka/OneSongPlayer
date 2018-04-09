@@ -58,13 +58,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         restart.setOnClickListener(this);
 
         songInfo.setSelected(true);
-
-//        song.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mp) {
-//
-//            }
-//        });
     }
 
     @SuppressLint("DefaultLocale")
@@ -94,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             songInfo.setSelected(false);
                             actualTime = 0;
                             song.seekTo(actualTime);
+                            releaseMediaPlayer();
                         }
                     });
                 } else {
@@ -134,10 +128,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (isPlaying) {
                     song.start();
                 }
-                restart.setImageResource(R.drawable.repeat_purple);
+                restart.setImageResource(R.drawable.reload_purple);
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
-                        restart.setImageResource(R.drawable.repeat_grey);
+                        restart.setImageResource(R.drawable.reload_grey);
                     }
                 }, 200);
         }
@@ -170,6 +164,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             songTimeView.setText(String.format("%d:0%d", minutes, seconds));
         } else {
             songTimeView.setText(String.format("%d:%d", minutes, seconds));
+        }
+    }
+    private void releaseMediaPlayer() {
+        if (song != null) {
+            song.release();
+            song = null;
         }
     }
 }
