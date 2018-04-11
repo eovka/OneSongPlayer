@@ -1,6 +1,8 @@
 package pl.pisze_czytam.mediaplayertest;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     MediaPlayer song;
+    AudioManager audioManager;
     SeekBar seekBar;
     TextView songInfo;
     TextView actualTimeView;
@@ -29,6 +32,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int rewindTime;
     private Handler myHandler = new Handler();
 
+    MediaPlayer.OnCompletionListener completionListener = new MediaPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            play.setImageResource(R.drawable.button_play);
+            isPlaying = false;
+            songInfo.setSelected(false);
+            actualTime = 0;
+            song.seekTo(actualTime);
+            releaseMediaPlayer();
+        }
+    };
+
+    AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+        @Override
+        public void onAudioFocusChange(int focusChange) {
+            switch (focusChange) {
+                case AudioManager.AUDIOFOCUS_GAIN:
+                    song.start();
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS:
+                    song.stop();
+                    releaseMediaPlayer();
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                    song.pause();
+                    break;
+                case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
+                    song.pause();
+                    break;
+            }
+        }
+    };
+
     @SuppressLint("DefaultLocale")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         song = MediaPlayer.create(this, R.raw.kochankowie_gwiezdnych_przestrzeni_kino_w_elblagu);
+        audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+
         isPlaying = false;
         rewindTime = 15000;
 
@@ -56,8 +94,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         back.setOnClickListener(this);
         forward.setOnClickListener(this);
         restart.setOnClickListener(this);
-
-        songInfo.setSelected(true);
     }
 
     @SuppressLint("DefaultLocale")
@@ -66,35 +102,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.play_button:
                 if (!isPlaying) {
-                    play.setImageResource(R.drawable.button_play_purple);
-                    song.start();
-                    isPlaying = true;
-                    updatingActualTime();
-                    showSongTime();
-                    songInfo.setSingleLine(true);
-                    songInfo.setFreezesText(true);
-                    songInfo.setText(getString(R.string.kino_w_elblagu_song));
-                    songInfo.setSelected(true);
-                    songInfo.setFocusable(true);
-                    songInfo.setFocusableInTouchMode(true);
-                    songInfo.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-
-                    song.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            play.setImageResource(R.drawable.button_play);
-                            isPlaying = false;
-                            songInfo.setSelected(false);
-                            actualTime = 0;
-                            song.seekTo(actualTime);
-                            releaseMediaPlayer();
-                        }
-                    });
+                    int result = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+                    if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                        song.start();
+                        song.setOnCompletionListener(completionListener);
+                        play.setImageResource(R.drawable.button_play_purple);
+                        updatingActualTime();
+                        showSongTime();
+                        songInfo.setSingleLine(true);
+                        songInfo.setFreezesText(true);
+                        songInfo.setText(getString(R.string.kino_w_elblagu_song));
+                        songInfo.setSelected(true);
+                        songInfo.setFocusable(true);
+                        songInfo.setFocusableInTouchMode(true);
+                        songInfo.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                        isPlaying = true;
+                    }
                 } else {
                     play.setImageResource(R.drawable.button_pause_grey);
                     song.pause();
-                    isPlaying = false;
                     songInfo.setSelected(false);
+                    isPlaying = false;
                 }
                 break;
             case R.id.back_button:
@@ -170,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (song != null) {
             song.release();
             song = null;
+            audioManager.abandonAudioFocus(audioFocusChangeListener);
         }
     }
 }
