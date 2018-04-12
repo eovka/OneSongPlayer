@@ -48,9 +48,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onAudioFocusChange(int focusChange) {
             switch (focusChange) {
-                case AudioManager.AUDIOFOCUS_GAIN:
-                    song.start();
-                    break;
                 case AudioManager.AUDIOFOCUS_LOSS:
                     song.stop();
                     releaseMediaPlayer();
