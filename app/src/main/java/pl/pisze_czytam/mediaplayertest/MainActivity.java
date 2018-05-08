@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             songInfo.setSelected(false);
             actualTime = 0;
             song.seekTo(actualTime);
-            releaseMediaPlayer();
         }
     };
 
@@ -137,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 actualTime += rewindTime;
                 song.seekTo(actualTime);
                 seekBar.setProgress(actualTime);
+                // show actual time and reveal song duration when forwarding before clicking play
                 updatingActualTime();
                 showSongTime();
                 forward.setImageResource(R.drawable.forward_purple);
