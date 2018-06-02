@@ -90,6 +90,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         back.setOnClickListener(this);
         forward.setOnClickListener(this);
         restart.setOnClickListener(this);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekbar, int progress, boolean fromUser) {
+                if (song != null && fromUser){
+                    song.seekTo(progress);
+                }
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
     }
 
     @SuppressLint("DefaultLocale")
@@ -197,5 +212,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             song = null;
             audioManager.abandonAudioFocus(audioFocusChangeListener);
         }
+    }
+    public void onResume() {
+        super.onResume();
+        actualTime = song.getCurrentPosition();
+        seekBar.setProgress(actualTime);
+        showSongTime();
     }
 }
