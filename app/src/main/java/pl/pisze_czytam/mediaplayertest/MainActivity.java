@@ -2,6 +2,7 @@ package pl.pisze_czytam.mediaplayertest;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
@@ -9,23 +10,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import java.util.concurrent.TimeUnit;
 
+import pl.pisze_czytam.mediaplayertest.databinding.ActivityMainBinding;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    ActivityMainBinding bind;
     MediaPlayer song;
     AudioManager audioManager;
-    SeekBar seekBar;
-    TextView songInfo;
-    TextView actualTimeView;
-    TextView songTimeView;
-    ImageView play;
-    ImageView back;
-    ImageView forward;
-    ImageView restart;
     private int actualTime;
     private int finalTime;
     boolean isPlaying;
@@ -35,9 +29,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     MediaPlayer.OnCompletionListener completionListener = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
-            play.setImageResource(R.drawable.button_play);
+            bind.playButton.setImageResource(R.drawable.button_play);
             isPlaying = false;
-            songInfo.setSelected(false);
+            bind.songInfo.setSelected(false);
             actualTime = 0;
             song.seekTo(actualTime);
         }
@@ -65,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        bind = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         song = MediaPlayer.create(this, R.raw.kochankowie_gwiezdnych_przestrzeni_kino_w_elblagu);
         audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
@@ -73,25 +67,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         isPlaying = false;
         rewindTime = 15000;
 
-        seekBar = findViewById(R.id.seek_bar);
-        songInfo = findViewById(R.id.song_info);
-        actualTimeView = findViewById(R.id.actual_time);
-        songTimeView = findViewById(R.id.song_time);
-        play = findViewById(R.id.play_button);
-        back = findViewById(R.id.back_button);
-        forward = findViewById(R.id.for_button);
-        restart = findViewById(R.id.restart_button);
-
         actualTime = song.getCurrentPosition();
         finalTime = song.getDuration();
-        seekBar.setMax(finalTime);
+        bind.seekBar.setMax(finalTime);
 
-        play.setOnClickListener(this);
-        back.setOnClickListener(this);
-        forward.setOnClickListener(this);
-        restart.setOnClickListener(this);
+        bind.playButton.setOnClickListener(this);
+        bind.backButton.setOnClickListener(this);
+        bind.forButton.setOnClickListener(this);
+        bind.restartButton.setOnClickListener(this);
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        bind.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekbar, int progress, boolean fromUser) {
                 if (song != null && fromUser){
@@ -117,61 +102,61 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                         song.start();
                         song.setOnCompletionListener(completionListener);
-                        play.setImageResource(R.drawable.button_play_purple);
+                        bind.playButton.setImageResource(R.drawable.button_play_purple);
                         updatingActualTime();
                         showSongTime();
-                        songInfo.setSingleLine(true);
-                        songInfo.setFreezesText(true);
-                        songInfo.setText(getString(R.string.kino_w_elblagu_song));
-                        songInfo.setSelected(true);
-                        songInfo.setFocusable(true);
-                        songInfo.setFocusableInTouchMode(true);
-                        songInfo.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                        bind.songInfo.setSingleLine(true);
+                        bind.songInfo.setFreezesText(true);
+                        bind.songInfo.setText(getString(R.string.kino_w_elblagu_song));
+                        bind.songInfo.setSelected(true);
+                        bind.songInfo.setFocusable(true);
+                        bind.songInfo.setFocusableInTouchMode(true);
+                        bind.songInfo.setEllipsize(TextUtils.TruncateAt.MARQUEE);
                         isPlaying = true;
                     }
                 } else {
-                    play.setImageResource(R.drawable.button_pause_grey);
+                    bind.playButton.setImageResource(R.drawable.button_pause_grey);
                     song.pause();
-                    songInfo.setSelected(false);
+                    bind.songInfo.setSelected(false);
                     isPlaying = false;
                 }
                 break;
             case R.id.back_button:
                 actualTime -= rewindTime;
                 song.seekTo(actualTime);
-                seekBar.setProgress(actualTime);
-                back.setImageResource(R.drawable.backward_purple);
+                bind.seekBar.setProgress(actualTime);
+                bind.backButton.setImageResource(R.drawable.backward_purple);
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
-                        back.setImageResource(R.drawable.backward_grey);
+                        bind.backButton.setImageResource(R.drawable.backward_grey);
                     }
                 }, 200);
                 break;
             case R.id.for_button:
                 actualTime += rewindTime;
                 song.seekTo(actualTime);
-                seekBar.setProgress(actualTime);
+                bind.seekBar.setProgress(actualTime);
                 // show actual time and reveal song duration when forwarding before clicking play
                 updatingActualTime();
                 showSongTime();
-                forward.setImageResource(R.drawable.forward_purple);
+                bind.forButton.setImageResource(R.drawable.forward_purple);
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
-                        forward.setImageResource(R.drawable.forward_grey);
+                        bind.forButton.setImageResource(R.drawable.forward_grey);
                     }
                 }, 200);
                 break;
             case R.id.restart_button:
                 actualTime = 0;
-                seekBar.setProgress(actualTime);
+                bind.seekBar.setProgress(actualTime);
                 song.seekTo(actualTime);
                 if (isPlaying) {
                     song.start();
                 }
-                restart.setImageResource(R.drawable.reload_purple);
+                bind.restartButton.setImageResource(R.drawable.reload_purple);
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
-                        restart.setImageResource(R.drawable.reload_grey);
+                        bind.restartButton.setImageResource(R.drawable.reload_grey);
                     }
                 }, 200);
         }
@@ -188,11 +173,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         long minutes = TimeUnit.MILLISECONDS.toMinutes(actualTime);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(actualTime) - TimeUnit.MINUTES.toSeconds(minutes);
         if (seconds % 60 < 10) {
-            actualTimeView.setText(String.format("%d:0%d", minutes, seconds));
+            bind.actualTime.setText(String.format("%d:0%d", minutes, seconds));
         } else {
-            actualTimeView.setText(String.format("%d:%d", minutes, seconds));
+            bind.actualTime.setText(String.format("%d:%d", minutes, seconds));
         }
-        seekBar.setProgress(actualTime);
+        bind.seekBar.setProgress(actualTime);
         myHandler.postDelayed(UpdateSongTime,50);
     }
 
@@ -201,9 +186,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         long minutes = TimeUnit.MILLISECONDS.toMinutes(finalTime);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(finalTime) - TimeUnit.MINUTES.toSeconds(minutes);
         if (seconds % 60 < 10) {
-            songTimeView.setText(String.format("%d:0%d", minutes, seconds));
+            bind.songTime.setText(String.format("%d:0%d", minutes, seconds));
         } else {
-            songTimeView.setText(String.format("%d:%d", minutes, seconds));
+            bind.songTime.setText(String.format("%d:%d", minutes, seconds));
         }
     }
     private void releaseMediaPlayer() {
@@ -216,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         actualTime = song.getCurrentPosition();
-        seekBar.setProgress(actualTime);
+        bind.seekBar.setProgress(actualTime);
         showSongTime();
     }
 }
