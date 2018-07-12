@@ -23,8 +23,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int actualTime;
     private int finalTime;
     boolean isPlaying;
-    int rewindTime;
+    int rewindTime = 15000;
     private Handler myHandler = new Handler();
+    private static final String TIME_KEY = "currentTime";
+    private static final String PLAYING_KEY = "isPlaying";
 
     MediaPlayer.OnCompletionListener completionListener = new MediaPlayer.OnCompletionListener() {
         @Override
@@ -64,10 +66,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         song = MediaPlayer.create(this, R.raw.kochankowie_gwiezdnych_przestrzeni_kino_w_elblagu);
         audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
-        isPlaying = false;
-        rewindTime = 15000;
+        if (savedInstanceState != null) {
+            bind.actualTime.setText(savedInstanceState.getInt(TIME_KEY));
+            isPlaying = savedInstanceState.getBoolean(PLAYING_KEY);
+        } else {
+            actualTime = song.getCurrentPosition();
+            isPlaying = false;
+        }
 
-        actualTime = song.getCurrentPosition();
         finalTime = song.getDuration();
         bind.seekBar.setMax(finalTime);
 
@@ -203,5 +209,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         actualTime = song.getCurrentPosition();
         bind.seekBar.setProgress(actualTime);
         showSongTime();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(TIME_KEY, song.getCurrentPosition());
+        outState.putBoolean(PLAYING_KEY, isPlaying);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        bind.actualTime.setText(savedInstanceState.getInt(TIME_KEY));
+        isPlaying = savedInstanceState.getBoolean(PLAYING_KEY);
     }
 }
